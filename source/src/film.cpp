@@ -26,8 +26,8 @@ void Film::save(const std::filesystem::path &filepath) const
         return;
     }
 
-    // 写入图片头信息
-    file << "P3\n" << m_width << " " << m_height << "\n255\n";
+    // 写入图片头信息 P6 表示二进制格式
+    file << "P6\n" << m_width << " " << m_height << "\n255\n";
 
     // 写入图片像素信息
     for (size_t y = 0; y < m_height; ++y)
@@ -36,7 +36,7 @@ void Film::save(const std::filesystem::path &filepath) const
         {
             const glm::vec3& color = getPixel(x, y); // 获取像素颜色
             glm::vec3 color_i = glm::clamp(color*255.0f, 0.0f, 255.0f); // 颜色值转换为整数
-            file << (int)color_i.r << " " << (int)color_i.g << " " << (int)color_i.b << " "; // 写入像素值
+            file << static_cast<uint8_t>(color_i.r) << " " << static_cast<uint8_t>(color_i.g) << " " << static_cast<uint8_t>(color_i.b) << " "; // 写入像素值
         }
     }
 
