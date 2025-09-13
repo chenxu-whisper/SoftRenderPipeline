@@ -5,7 +5,8 @@
 # include <vector>
 # include <list>
 # include <thread>
-# include <mutex>
+# include <functional>
+#include "spin_lock.hpp"
 
 // 任务基类
 class Task
@@ -24,14 +25,17 @@ public:
 
     static void workerThread(ThreadPool* thread_pool);
 
+    void parallelFor(size_t threads_num, size_t task_num, const std::function<void(size_t, size_t)>& func);
+    void wait() const;
+
     void addTask(Task* task);
     Task* getTask();
 
 private:
-    bool m_alive;
+    std::atomic<int> m_alive;
     std::vector<std::thread> m_threads;  // 线程池
     std::list<Task*> m_tasks; // 任务队列
-    std::mutex m_lock;  // 互斥锁
+    SpinLock m_lock; // 自旋锁
 };
 
 

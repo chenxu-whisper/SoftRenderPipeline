@@ -2,7 +2,7 @@
 
 ThreadPool::ThreadPool(size_t threads_num)
 {
-    m_alive = true;
+    m_alive = 1;
     // 线程数为0时，获取硬件线程数
     if (threads_num == 0)
         threads_num = std::thread::hardware_concurrency();
@@ -14,7 +14,7 @@ ThreadPool::ThreadPool(size_t threads_num)
 
 void ThreadPool::workerThread(ThreadPool *thread_pool)
 {
-    while (thread_pool->m_alive)
+    while (thread_pool->m_alive == 1)
     {
         // 从任务队列中获取任务
         Task* task = thread_pool->getTask();
@@ -25,10 +25,40 @@ void ThreadPool::workerThread(ThreadPool *thread_pool)
     }
 }
 
+struct ParallelForTask:public Task
+{
+public:
+    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& func)
+                    :m_x(x), m_y(y), m_func(func)
+    {}
+
+    void run() override { m_func(m_x, m_y); }
+
+private:
+    size_t m_x, m_y;
+    std::function<void(size_t, size_t)> m_func;
+};
+
+void ThreadPool::parallelFor(size_t threads_num, size_t task_num, const std::function<void(size_t, size_t)> &func)
+{
+    SpinLockGuard guard(m_lock);
+
+    for (size_t i = 0; i < threads_num; i++)
+        for (size_t j = 0; j < task_num; j++)
+            m_tasks.push_back(new  ParallelForTask(i, j, func));
+}
+
+void ThreadPool::wait() const
+{
+    // 等待任务队列清空
+    while (!m_tasks.empty())
+        std::this_thread::yield();
+}
+
 void ThreadPool::addTask(Task *task)
 {
     // 加锁
-    std::lock_guard<std::mutex> lock(m_lock);
+    SpinLockGuard guard(m_lock);
     // 添加任务
     m_tasks.push_back(task);
 }
@@ -36,7 +66,7 @@ void ThreadPool::addTask(Task *task)
 Task * ThreadPool::getTask()
 {
     // 加锁
-    std::lock_guard<std::mutex> lock(m_lock);
+    SpinLockGuard guard(m_lock);
 
     if (m_tasks.empty())
         return nullptr;
@@ -49,8 +79,10 @@ Task * ThreadPool::getTask()
 
 ThreadPool::~ThreadPool()
 {
-    while (!m_tasks.empty()) { }
-    m_alive = false;
+    // 等待任务队列清空
+    wait();
+    // 通知所有线程退出
+    m_alive = 0;
 
     // 等待所有线程执行完毕
     for (auto& thread : m_threads)
