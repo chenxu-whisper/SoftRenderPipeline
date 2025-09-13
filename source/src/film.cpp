@@ -1,0 +1,46 @@
+#include <iostream>
+#include <fstream>
+#include "film.h"
+
+
+Film::Film(size_t width, size_t height)
+    : m_width(width), m_height(height)
+{
+    m_pixels.resize(width * height);
+}
+
+size_t Film::getWidth() const { return m_width; }
+
+size_t Film::getHeight() const { return m_height; }
+
+glm::vec3 Film::getPixel(size_t x, size_t y) const { return m_pixels[x + y * m_width]; }
+
+void Film::setPixel(size_t x, size_t y, const glm::vec3 &color) { m_pixels[x + y * m_width] = color; }
+
+void Film::save(const std::filesystem::path &filepath) const
+{
+    // 保存图片
+    std::ofstream file(filepath);
+    if (!file.is_open()) {
+        std::cerr << "无法打开文件：" << filepath.string() << std::endl;
+        return;
+    }
+
+    // 写入图片头信息
+    file << "P3\n" << m_width << " " << m_height << "\n255\n";
+
+    // 写入图片像素信息
+    for (size_t y = 0; y < m_height; ++y)
+    {
+        for (size_t x = 0; x < m_width; ++x)
+        {
+            const glm::vec3& color = getPixel(x, y); // 获取像素颜色
+            glm::vec3 color_i = glm::clamp(color*255.0f, 0.0f, 255.0f); // 颜色值转换为整数
+            file << (int)color_i.r << " " << (int)color_i.g << " " << (int)color_i.b << " "; // 写入像素值
+        }
+    }
+
+    file.close();
+}
+
+Film::~Film() = default;

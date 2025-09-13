@@ -3,5 +3,6 @@ project(SoftRenderPipeline)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# 第三方库
 add_subdirectory(thirdparty/glm)
-add_subdirectory(src)
+add_subdirectory(source)

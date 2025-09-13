@@ -81,3 +81,5 @@ coverage/
 *.msan
 *.lsan
 *.asan
+
+.clang-tidy
