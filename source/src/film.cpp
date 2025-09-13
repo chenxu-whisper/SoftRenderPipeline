@@ -36,7 +36,7 @@ void Film::save(const std::filesystem::path &filepath) const
         {
             const glm::vec3& color = getPixel(x, y); // 获取像素颜色
             glm::vec3 color_i = glm::clamp(color*255.0f, 0.0f, 255.0f); // 颜色值转换为整数
-            file << static_cast<uint8_t>(color_i.r) << " " << static_cast<uint8_t>(color_i.g) << " " << static_cast<uint8_t>(color_i.b) << " "; // 写入像素值
+            file << static_cast<uint8_t>(color_i.r) << static_cast<uint8_t>(color_i.g) <<static_cast<uint8_t>(color_i.b); // 写入像素值
         }
     }
 

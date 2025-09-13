@@ -25,7 +25,7 @@ public:
 
     static void workerThread(ThreadPool* thread_pool);
 
-    void parallelFor(size_t threads_num, size_t task_num, const std::function<void(size_t, size_t)>& func);
+    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& func);
     void wait() const;
 
     void addTask(Task* task);

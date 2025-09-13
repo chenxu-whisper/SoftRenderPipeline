@@ -1,0 +1,25 @@
+#include "sphere.h"
+
+Sphere::Sphere(const glm::vec3 &center, float radius)
+    : m_center(center), m_radius(radius)
+{}
+
+// 计算射线与球体的交点
+std::optional<float> Sphere::intersect(const Ray &ray) const
+{
+    glm::vec3 co = ray.origin - m_center; // 射线与球体中心的向量
+    float b = 2 * glm::dot(ray.direction, co); // 射线与球体中心的点积
+    float c = glm::dot(co, co) - m_radius * m_radius; // 射线与球体中心的向量的模长的平方
+
+    float discriminant = b * b - 4 * c; // 判别式
+    if (discriminant < 0.0f) return std::nullopt;
+
+    float hit_t = (-b - std::sqrt(discriminant)) * 0.5f; // 射线与球体的第一个交点
+    if (hit_t < 0.0f)
+        hit_t = (-b + std::sqrt(discriminant)) * 0.5f;  // 射线与球体的第二个交点
+    if (hit_t > 0.0f) return hit_t; // 射线与球体的交点在射线的前方
+
+    return std::nullopt;
+}
+
+Sphere::~Sphere() {}

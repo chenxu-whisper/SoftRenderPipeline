@@ -83,3 +83,4 @@ coverage/
 *.asan
 
 .clang-tidy
+*.ppm

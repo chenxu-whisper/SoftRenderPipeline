@@ -28,24 +28,24 @@ void ThreadPool::workerThread(ThreadPool *thread_pool)
 struct ParallelForTask:public Task
 {
 public:
-    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& func)
-                    :m_x(x), m_y(y), m_func(func)
+    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& lamda)
+                    :m_x(x), m_y(y), m_lambda(lamda)
     {}
 
-    void run() override { m_func(m_x, m_y); }
+    void run() override { m_lambda(m_x, m_y); }
 
 private:
     size_t m_x, m_y;
-    std::function<void(size_t, size_t)> m_func;
+    std::function<void(size_t, size_t)> m_lambda;
 };
 
-void ThreadPool::parallelFor(size_t threads_num, size_t task_num, const std::function<void(size_t, size_t)> &func)
+void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda)
 {
     SpinLockGuard guard(m_lock);
 
-    for (size_t i = 0; i < threads_num; i++)
-        for (size_t j = 0; j < task_num; j++)
-            m_tasks.push_back(new  ParallelForTask(i, j, func));
+    for (size_t i = 0; i < width; i++)
+        for (size_t j = 0; j < height; j++)
+            m_tasks.push_back(new  ParallelForTask(i, j, lambda));
 }
 
 void ThreadPool::wait() const
