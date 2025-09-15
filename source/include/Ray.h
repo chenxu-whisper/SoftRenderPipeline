@@ -5,10 +5,10 @@
 
 struct Ray
 {
-    glm::vec3 origin;
-    glm::vec3 direction;
+    glm::vec3 m_origin;
+    glm::vec3 m_direction;
 
-    glm::vec3 hit(float t) const { return origin + t * direction; } // 计算射线与物体的交点
+    glm::vec3 hit(float t) const { return m_origin + t * m_direction; } // 计算射线与物体的交点
 };
 
 #endif //RAY_H

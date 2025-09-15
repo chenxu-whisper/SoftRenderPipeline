@@ -5,9 +5,8 @@
 #include "film.h"
 #include "optional"
 
-class Sphere
+struct  Sphere
 {
-public:
     Sphere(const glm::vec3& center, float radius);
     ~Sphere();
 

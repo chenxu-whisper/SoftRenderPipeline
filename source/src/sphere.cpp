@@ -17,8 +17,8 @@ Sphere::Sphere(const glm::vec3 &center, float radius)
  */
 std::optional<float> Sphere::intersect(const Ray &ray) const
 {
-    glm::vec3 co = ray.origin - m_center; // 射线与球体中心的向量
-    float b = 2 * glm::dot(ray.direction, co); // 射线与球体中心的点积
+    glm::vec3 co = ray.m_origin - m_center; // 射线与球体中心的向量
+    float b = 2 * glm::dot(ray.m_direction, co); // 射线与球体中心的点积
     float c = glm::dot(co, co) - m_radius * m_radius; // 射线与球体中心的向量的模长的平方
 
     float discriminant = b * b - 4 * c; // 判别式
