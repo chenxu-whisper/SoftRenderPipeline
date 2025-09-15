@@ -4,7 +4,17 @@ Sphere::Sphere(const glm::vec3 &center, float radius)
     : m_center(center), m_radius(radius)
 {}
 
-// 计算射线与球体的交点
+/* 计算射线与球体的交点：详见：README.md
+ * @param ray 射线
+ * @return 射线与球体的交点
+ * @note 射线与球体的交点可能有两个，返回距离射线原点最近的那个
+ *
+ *  一元二次方程: a * t^2 + b * t + c = 0
+ *  一元二次方程的根为：{t1, t2} = (-b ± sqrt(b^2 - 4ac)) / 2a
+ *  (b^2 - 4ac) 为判别式， discriminant < 0 时，射线与球体无交点
+ *  discriminant = 0 时，射线与球体相切，t1 = t2, 同一个交点
+ *  discriminant > 0 时，射线与球体有两个交点
+ */
 std::optional<float> Sphere::intersect(const Ray &ray) const
 {
     glm::vec3 co = ray.origin - m_center; // 射线与球体中心的向量
