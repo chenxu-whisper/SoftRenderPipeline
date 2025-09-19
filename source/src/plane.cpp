@@ -8,7 +8,7 @@ Plane::Plane(glm::vec3 origin, glm::vec3 direction, glm::vec3 normal, float size
 }
 
 // 计算射线与平面的交点，且控制平面大小（矩形）
-std::optional<float> Plane::intersect(const Ray &ray) const
+std::optional<HitInfo> Plane::intersect(const Ray &ray, float t_min, float t_max) const
 {
     // 计算射线与无限大平面的交点
     float denominator = glm::dot(ray.m_direction, m_normal);
@@ -35,5 +35,5 @@ std::optional<float> Plane::intersect(const Ray &ray) const
         return std::nullopt;
     }
 
-    return t;
+    return HitInfo{t, hit_point, m_normal};
 }

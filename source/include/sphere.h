@@ -1,11 +1,10 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "ray.h"
 #include "film.h"
-#include "optional"
+#include "shape.h"
 
-struct  Sphere
+struct  Sphere : public Shape
 {
     Sphere(const glm::vec3& center, float radius);
     ~Sphere();
@@ -14,7 +13,9 @@ struct  Sphere
     float m_radius;
 
     // 计算射线与球体的交点
-    std::optional<float> intersect(const Ray& ray) const;
+    std::optional<HitInfo> intersect(const Ray& ray,
+                                     float t_min = 1e-5,
+                                     float t_max = std::numeric_limits<float>::infinity()) const override;
 };
 
 #endif //SPHERE_H

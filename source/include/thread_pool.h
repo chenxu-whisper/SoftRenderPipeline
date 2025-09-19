@@ -34,6 +34,7 @@ public:
 private:
     std::atomic<int> m_alive;
     std::vector<std::thread> m_threads;  // 线程池
+    std::atomic<int> m_task_count;
     std::list<Task*> m_tasks; // 任务队列
     SpinLock m_lock; // 自旋锁
 };

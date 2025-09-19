@@ -15,7 +15,7 @@ Sphere::Sphere(const glm::vec3 &center, float radius)
  *  discriminant = 0 时，射线与球体相切，t1 = t2, 同一个交点
  *  discriminant > 0 时，射线与球体有两个交点
  */
-std::optional<float> Sphere::intersect(const Ray &ray) const
+std::optional<HitInfo> Sphere::intersect(const Ray &ray, float t_min, float t_max) const
 {
     glm::vec3 co = ray.m_origin - m_center; // 射线与球体中心的向量
     float b = 2 * glm::dot(ray.m_direction, co); // 射线与球体中心的点积
@@ -27,7 +27,8 @@ std::optional<float> Sphere::intersect(const Ray &ray) const
     float hit_t = (-b - std::sqrt(discriminant)) * 0.5f; // 射线与球体的第一个交点
     if (hit_t < 0.0f)
         hit_t = (-b + std::sqrt(discriminant)) * 0.5f;  // 射线与球体的第二个交点
-    if (hit_t > 0.0f) return hit_t; // 射线与球体的交点在射线的前方
+    if (hit_t > t_min && hit_t < t_max)
+        return std::optional<HitInfo>(HitInfo{hit_t, ray.hit(hit_t), glm::normalize(ray.hit(hit_t) - m_center)}); // 射线与球体的交点在射线的前方
 
     return std::nullopt;
 }

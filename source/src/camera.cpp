@@ -22,7 +22,7 @@ Ray Camera::generateRay(const glm::vec2 &pixel_coord, const glm::vec2 &offset) c
     ndc = ndc * 2.0f - 1.0f; // map to [-1, 1]
 
     // (x/near ,y/near, 0, 1)
-    glm::vec4 clip_space = glm::vec4(ndc.x, ndc.y, 0.0f, 1.0f);
+    glm::vec4 clip_space = glm::vec4(ndc.x, ndc.y, -1.0f, 1.0f);
     glm::vec3 world_space = m_view_to_world_matrix * m_clip_to_view_matrix* clip_space;
 
     return Ray(m_position, glm::normalize(world_space - m_position));

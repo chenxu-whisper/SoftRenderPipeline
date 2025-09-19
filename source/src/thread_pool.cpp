@@ -3,6 +3,7 @@
 ThreadPool::ThreadPool(size_t threads_num)
 {
     m_alive = 1;
+    m_task_count = 0;
     // 线程数为0时，获取硬件线程数
     if (threads_num == 0)
         threads_num = std::thread::hardware_concurrency();
@@ -19,7 +20,10 @@ void ThreadPool::workerThread(ThreadPool *thread_pool)
         // 从任务队列中获取任务
         Task* task = thread_pool->getTask();
         if (task != nullptr)
+        {
             task->run(); // 执行任务
+            thread_pool->m_task_count--; // 任务数量减少
+        }
         else
             std::this_thread::yield();  // 没有任务时， yield 释放 CPU 时间片
     }
@@ -45,13 +49,16 @@ void ThreadPool::parallelFor(size_t width, size_t height, const std::function<vo
 
     for (size_t i = 0; i < width; i++)
         for (size_t j = 0; j < height; j++)
+        {
             m_tasks.push_back(new  ParallelForTask(i, j, lambda));
+            m_task_count++;
+        }
 }
 
 void ThreadPool::wait() const
 {
     // 等待任务队列清空
-    while (!m_tasks.empty())
+    while (m_task_count > 0)
         std::this_thread::yield();
 }
 
@@ -59,6 +66,8 @@ void ThreadPool::addTask(Task *task)
 {
     // 加锁
     SpinLockGuard guard(m_lock);
+    // 任务数量增加
+    m_task_count++;
     // 添加任务
     m_tasks.push_back(task);
 }

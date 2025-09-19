@@ -2,10 +2,9 @@
 #define PLANE_H
 
 #include "glm/vec3.hpp"
-#include <optional>
-#include "Ray.h"
+#include "Shape.h"
 
-struct  Plane
+struct  Plane : public Shape
 {
     glm::vec3 m_origin; // 平面原点
     glm::vec3 m_direction; // 平面方向
@@ -14,7 +13,9 @@ struct  Plane
 
     Plane(glm::vec3 origin, glm::vec3 direction, glm::vec3 normal, float size);
 
-    std::optional<float> intersect(const Ray& ray) const;  // 计算射线与平面的交点
+    std::optional<HitInfo> intersect(const Ray& ray,
+                                     float t_min = 1e-5,
+                                     float t_max = std::numeric_limits<float>::infinity()) const override;  // 计算射线与平面的交点
 };
 
 #endif //PLANE_H
