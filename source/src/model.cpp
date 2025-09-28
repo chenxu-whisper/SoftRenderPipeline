@@ -34,17 +34,27 @@ Model::Model(const std::filesystem::path& path)
         else if (line.compare(0, 3, "vn ") == 0)
         {
             glm::vec3 normal;
-            iss>>trash>>normal.x>>normal.y>>normal.z; // 解析法线
+            iss>>trash>>trash>>normal.x>>normal.y>>normal.z; // 解析法线
             normals.push_back(normal); // 存储法线
         }
         else if (line.compare(0, 2, "f ") == 0)
         {
             glm::ivec3 idx_v, idx_vn; // 顶点索引和法线索引
-            iss>>trash>>idx_v.x>>trash>>idx_v.y>>trash>>idx_v.z>>trash>>idx_vn.x>>trash>>idx_vn.y>>trash>>idx_vn.z; // 解析顶点索引和法线索引
+            iss>>trash; // 忽略 'f'
+            // 解析顶点索引和法线索引
+            iss>>idx_v.x>>trash>>trash>>idx_vn.x;
+            iss>>idx_v.y>>trash>>trash>>idx_vn.y;
+            iss>>idx_v.z>>trash>>trash>>idx_vn.z;
             // 索引从1开始，转换为0开始的索引
-            m_triangles.push_back(Triangle(positions[idx_v.x-1], positions[idx_v.y-1], positions[idx_v.z-1], normals[idx_vn.x-1], normals[idx_vn.y-1], normals[idx_vn.z-1]));
+            m_triangles.push_back(Triangle(positions[idx_v.x - 1], positions[idx_v.y - 1], positions[idx_v.z - 1],
+                                            normals[idx_vn.x - 1], normals[idx_vn.y - 1], normals[idx_vn.z - 1]));
         }
     }
+
+    std::cout << "Model loaded with " << m_triangles.size() << " triangles" << std::endl;
+
+    if (m_triangles.empty())
+        std::cerr << "Warning: Model loaded but contains no triangles. Check OBJ file format." << std::endl;
 }
 
 std::optional<HitInfo> Model::intersect(const Ray& ray, float t_min, float t_max) const

@@ -6,12 +6,10 @@
 #include "triangle.h"
 
 
-class Model : public Shape
+struct Model : public Shape
 {
-private:
     std::vector<Triangle> m_triangles;
 
-public:
     Model(const std::vector<Triangle>& triangles);
     Model(const std::filesystem::path& path);
 

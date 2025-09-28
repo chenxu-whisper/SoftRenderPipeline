@@ -18,8 +18,8 @@ public:
 private:
     Film& m_film;
     glm::vec3 m_position;
-    glm::mat3 m_clip_to_view_matrix;  // from clip space to view space
-    glm::mat3 m_view_to_world_matrix;  // from view space to world space
+    glm::mat4 m_clip_to_view_matrix;  // from clip space to view space
+    glm::mat4 m_view_to_world_matrix;  // from view space to world space
 };
 
 #endif //CAMERA_H
