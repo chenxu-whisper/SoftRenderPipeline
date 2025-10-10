@@ -41,10 +41,11 @@ int main()
         {
             glm::vec3 light_pos(-1.0f, 2.0f, 1.0f);
             glm::vec3 light_dir = glm::normalize(light_pos - hit_info->position);
-            glm::vec3 normal_dir = (hit_info->normal + glm::vec3(1.0f)) * 0.5f; // 将法线映射到 [0, 1] 范围
+            glm::vec3 normal_dir = hit_info->normal; // 将法线映射到 [0, 1] 范围
             float diff = std::max(0.0f, glm::dot(normal_dir, light_dir));
-            float ambient = 0.0f;
-            film.setPixel(x, y, glm::vec3(diff + ambient));
+            float ambient = 0.1f;
+            float final_color = glm::clamp(diff + ambient, 0.0f, 1.0f);
+            film.setPixel(x, y, glm::vec3(final_color));
         }
 
         // 计算射线与三角形的交点
