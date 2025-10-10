@@ -13,7 +13,6 @@ Camera::Camera(Film &film, glm::vec3 position, glm::vec3 viewpoint, float fov)
     // 计算视图矩阵的逆矩阵
     m_view_to_world_matrix = glm::inverse(glm::lookAt(m_position, viewpoint, glm::vec3(0.0f, 1.0f, 0.0f)));
 }
-
 Ray Camera::generateRay(const glm::vec2 &pixel_coord, const glm::vec2 &offset) const
 {
     // ndc 坐标

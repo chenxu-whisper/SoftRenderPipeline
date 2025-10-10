@@ -18,15 +18,17 @@ Sphere::Sphere(const glm::vec3 &center, float radius)
 std::optional<HitInfo> Sphere::intersect(const Ray &ray, float t_min, float t_max) const
 {
     glm::vec3 co = ray.m_origin - m_center; // 射线与球体中心的向量
+    // 一元二次方程的系数
+    float a = glm::dot(ray.m_direction, ray.m_direction); // 射线方向的向量的模长的平方
     float b = 2 * glm::dot(ray.m_direction, co); // 射线与球体中心的点积
     float c = glm::dot(co, co) - m_radius * m_radius; // 射线与球体中心的向量的模长的平方
 
-    float discriminant = b * b - 4 * c; // 判别式
+    float discriminant = b * b - 4 * a * c; // 判别式
     if (discriminant < 0.0f) return std::nullopt;
 
-    float hit_t = (-b - std::sqrt(discriminant)) * 0.5f; // 射线与球体的第一个交点
+    float hit_t = (-b - std::sqrt(discriminant)) * 0.5f / a; // 射线与球体的第一个交点
     if (hit_t < 0.0f)
-        hit_t = (-b + std::sqrt(discriminant)) * 0.5f;  // 射线与球体的第二个交点
+        hit_t = (-b + std::sqrt(discriminant)) * 0.5f / a;  // 射线与球体的第二个交点
     if (hit_t > t_min && hit_t < t_max)
         return std::optional<HitInfo>(HitInfo{hit_t, ray.hit(hit_t), glm::normalize(ray.hit(hit_t) - m_center)}); // 射线与球体的交点在射线的前方
 

@@ -10,7 +10,7 @@ public:
     Camera(Film& film, glm::vec3 position, glm::vec3 viewpoint, float fov);
     ~Camera();
 
-    Ray generateRay(const glm::vec2& pixel_coord, const glm::vec2& offset = glm::vec2(0.5f)) const;
+     Ray generateRay(const glm::vec2& pixel_coord, const glm::vec2& offset = glm::vec2(0.5f)) const;
 
     Film& getFilm() const;
     const Film& film() const;
