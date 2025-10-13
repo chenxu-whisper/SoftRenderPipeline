@@ -2,7 +2,7 @@
 #define PLANE_H
 
 #include "glm/vec3.hpp"
-#include "Shape.h"
+#include "shape.h"
 
 struct  Plane : public Shape
 {

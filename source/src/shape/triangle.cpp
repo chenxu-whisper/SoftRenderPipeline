@@ -1,4 +1,4 @@
-#include "triangle.h"
+#include "./shape/triangle.h"
 #include "glm/ext/quaternion_geometric.hpp"
 
 Triangle::Triangle(glm::vec3& v0, glm::vec3& v1, glm::vec3& v2, glm::vec3& n0, glm::vec3& n1, glm::vec3& n2)

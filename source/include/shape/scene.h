@@ -2,7 +2,7 @@
 #define SCENE_H
 
 #include <vector>
-#include "Shape.h"
+#include "shape.h"
 
 struct ShapeInstance
 {

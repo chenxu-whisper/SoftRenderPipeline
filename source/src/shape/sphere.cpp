@@ -1,4 +1,4 @@
-#include "sphere.h"
+#include "./shape/sphere.h"
 
 Sphere::Sphere(const glm::vec3 &center, float radius)
     : m_center(center), m_radius(radius)

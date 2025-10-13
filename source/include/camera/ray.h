@@ -2,7 +2,7 @@
 #define RAY_H
 
 # include <glm/glm.hpp>
-#include "material.h"
+#include "./shape/material.h"
 
 struct Ray
 {

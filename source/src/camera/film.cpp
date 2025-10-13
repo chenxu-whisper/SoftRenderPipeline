@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include "film.h"
-#include "rgb.h"
+#include "./camera/film.h"
+#include "./util/rgb.h"
 
 
 Film::Film(size_t width, size_t height)
