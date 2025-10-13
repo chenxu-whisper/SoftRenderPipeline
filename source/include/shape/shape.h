@@ -2,7 +2,7 @@
 #define SHAPE_H
 
 #include <optional>
-#include "ray.h"
+#include "../camera/ray.h"
 
 struct Shape
 {

@@ -1,7 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "film.h"
+#include "../camera/film.h"
 #include "shape.h"
 
 struct  Sphere : public Shape

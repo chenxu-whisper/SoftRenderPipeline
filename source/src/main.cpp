@@ -1,18 +1,19 @@
 #include <iostream>
-#include <random>
-#include "thread_pool.h"
-#include "film.h"
-#include "camera.h"
-#include "frame.h"
-#include "Shape.h"
-#include "sphere.h"
-#include "plane.h"
-#include "triangle.h"
-#include "model.h"
-#include "scene.h"
+#include "./thread/thread_pool.h"
+#include "./camera/film.h"
+#include "./camera/camera.h"
+#include "./util/frame.h"
+#include "./shape/Shape.h"
+#include "./shape/sphere.h"
+#include "./shape/plane.h"
+#include "./shape/triangle.h"
+#include "./shape/model.h"
+#include "./shape/scene.h"
+#include "./util/rng.hpp"
+#include "./util/progress.h"
 
-#define FILM_WIDTH 1080
-#define FILM_HEIGHT 720
+#define FILM_WIDTH 108
+#define FILM_HEIGHT 72
 
 int main()
 {
@@ -38,46 +39,49 @@ int main()
         {glm::vec3(1.0f, 0.4f, 0.6f), false, glm::vec3(0.1f, 0.2f, 0.3f)},
             glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(0.6f), glm::vec3(0.0f, 120.0f, 0.0f));
 
-    std::mt19937 gen(23451334); // 随机数生成器
-    std::uniform_real_distribution<float> dis(-1.0f, 1.0f); // 随机数分布
+    RNG rng(23451334);
     const int spp = 128; // 采样次数
+    Progress progress(film.getWidth() * film.getHeight() * spp);
 
     thread_pool.parallelFor(film.getWidth(), film.getHeight(), [&](size_t x, size_t y)->void
     {
         // spp: 采样次数
         for (int i = 1; i < spp; ++i)
         {
-            Ray ray = camera.generateRay(glm::vec2(x, y), glm::abs(glm::vec2(dis(gen), dis(gen)))); // 生成射线
-            glm::vec3 beta = { 1.0f, 1.0f, 1.0f };
-            glm::vec3 final_color = { 0.0f, 0.0f, 0.0f };
+            Ray ray = camera.generateRay(glm::vec2(x, y), glm::vec2(rng.uniform(), rng.uniform())); // 生成射线
+            glm::vec3 beta = { 1.0f, 1.0f, 1.0f }; // 反射系数
+            glm::vec3 final_color = { 0.0f, 0.0f, 0.0f }; // 最终颜色
 
             // 光线追踪：https://raytracing.github.io/books/RayTracingInOneWeekend.html
             while (true)
             {
-                std::optional<HitInfo> hit_info = scene.intersect(ray, 0.0f, 1000.0f);
+                std::optional<HitInfo> hit_info = scene.intersect(ray, 0.0f, 1000.0f); // 计算射线与场景中物体的交点
                 if (hit_info.has_value())
                 {
                     final_color += beta * hit_info->material->m_emissive;
-                    beta *= hit_info->material->m_albedo;
+                    beta *= hit_info->material->m_albedo; //
 
                     ray.m_origin = hit_info->position + hit_info->normal * 0.001f; // 避免与物体本身相交
                     Frame frame(hit_info->normal); // 计算反射方向
                     glm::vec3 light_direction;
                     if (hit_info->material->m_is_specular)
                     {
-                        glm::vec3 view_dir = frame.world_to_screen(-ray.m_direction);
-                        light_direction = glm::vec3(-view_dir.x, view_dir.y, -view_dir.z);
+                        glm::vec3 view_dir = frame.world_to_screen(-ray.m_direction); // 计算反射方向
+                        light_direction = glm::vec3(-view_dir.x, view_dir.y, -view_dir.z); // 与反射方向相反
                     }
                     else
                     {
-                        do{ light_direction = glm::vec3(dis(gen), dis(gen), dis(gen));
-                        } while (glm::length(light_direction) > 1.0f);
+                        // 随机采样一个方向
+                        do{
+                            light_direction = glm::vec3(rng.uniform(), rng.uniform(), rng.uniform()); // 生成随机方向
+                            light_direction = light_direction * 2.0f  - glm::vec3(1.0f); // 将随机方向映射到[-1, 1]范围
+                        } while (glm::length(light_direction) > 1.0f); // 确保方向在单位球内
 
                         // 半球采样
                         if (light_direction.y < 0.0f)
                             light_direction.y = -light_direction.y;
                     }
-                    ray.m_direction = frame.world_to_screen(light_direction);
+                    ray.m_direction = frame.world_to_screen(light_direction); // 转换为屏幕空间
                 }
                 else { break; }
             }
@@ -126,9 +130,11 @@ int main()
         //     // film.setPixel(x, y, glm::vec3(1.0f, 1.0f, 0.0f));
         // }
 
-        int n= ++pixel_count;
-        if (n % film.getWidth() == 0)
-            std::cout << static_cast<float>(n) / (film.getWidth() * film.getHeight()) << std::endl;
+        progress.update(spp);
+
+        // int n= ++pixel_count;
+        // if (n % film.getWidth() == 0)
+        //     std::cout << static_cast<float>(n) / (film.getWidth() * film.getHeight()) << std::endl;
     });
 
     thread_pool.wait();

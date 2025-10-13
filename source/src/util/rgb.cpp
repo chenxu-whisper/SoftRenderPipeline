@@ -1,4 +1,4 @@
-#include "rgb.h"
+#include "./util/rgb.h"
 
 RGB::RGB(int r, int g, int b) : m_r(r), m_g(g), m_b(b) { }
 

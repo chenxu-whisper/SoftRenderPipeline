@@ -1,4 +1,4 @@
-#include "plane.h"
+#include "./shape/plane.h"
 
 Plane::Plane(glm::vec3 origin, glm::vec3 direction, glm::vec3 normal, float size)
     : m_origin(origin), m_direction(direction), m_normal(normal), m_size(size)

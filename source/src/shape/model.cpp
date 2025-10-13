@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-# include "model.h"
+#include "./shape/model.h"
 
 
 Model::Model(const std::vector<Triangle>& triangles) : m_triangles(triangles) {}

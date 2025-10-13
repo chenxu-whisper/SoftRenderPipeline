@@ -1,4 +1,4 @@
-# include "ray.h"
+#include "./camera/ray.h"
 
 glm::vec3 Ray::hit(float t) const { return m_origin + t * m_direction; } // 计算射线与物体的交点
 
