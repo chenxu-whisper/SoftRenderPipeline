@@ -7,6 +7,7 @@
   * https://github.com/HeaoYe/CPUPathTracing
 * 教程
   * [从0开始的光追渲染器](https://www.bilibili.com/video/BV1MJYAeYEDk/?spm_id_from=333.1387.favlist.content.click&vd_source=ea1126481fe967c5595662e4c804d212)
+  * [Ray Tracing in One Weekend Book Series](https://github.com/RayTracing/raytracing.github.io)
   * [Learn computer graphics from scratch and for free.](https://www.scratchapixel.com/index.html)
 
 ### 碰撞检测

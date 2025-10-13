@@ -23,7 +23,13 @@
 
 #include <filesystem>
 #include <vector>
-#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
+
+struct Pixel
+{
+    glm::vec3 m_color = glm::vec3(0.0f, 0.0f, 0.0f);
+    int m_sample_count = 0;
+};
 
 class Film
 {
@@ -33,14 +39,14 @@ public:
 
     size_t getWidth() const;
     size_t getHeight() const;
-    glm::vec3 getPixel(size_t x, size_t y) const; // 获取像素值
+    Pixel getPixel(size_t x, size_t y) const; // 获取像素值
     void setPixel(size_t x, size_t y, const glm::vec3& color); // 像素值范围[0, 1]
     void save(const std::filesystem::path&  filepath) const; // 保存为PPM格式
 
 private:
     size_t m_width;
     size_t m_height;
-    std::vector<glm::vec3> m_pixels;
+    std::vector<Pixel> m_pixels;
 };
 
 

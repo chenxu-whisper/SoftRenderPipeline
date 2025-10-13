@@ -19,7 +19,7 @@ struct HitInfo
     float t;
     glm::vec3 position;
     glm::vec3 normal;
-    const Material *material;
+    const Material *material = nullptr;
 };
 
 #endif //RAY_H
