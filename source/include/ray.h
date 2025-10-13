@@ -2,6 +2,7 @@
 #define RAY_H
 
 # include <glm/glm.hpp>
+#include "material.h"
 
 struct Ray
 {
@@ -18,6 +19,7 @@ struct HitInfo
     float t;
     glm::vec3 position;
     glm::vec3 normal;
+    const Material *material;
 };
 
 #endif //RAY_H
