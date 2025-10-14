@@ -10,7 +10,6 @@
 #include "./renderer/normal_renderer.h"
 #include "./renderer/raytracing_renderer.h"
 
-
 #define FILM_WIDTH 108
 #define FILM_HEIGHT 72
 #define SPP 128

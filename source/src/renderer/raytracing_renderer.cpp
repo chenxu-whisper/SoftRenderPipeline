@@ -40,6 +40,6 @@ glm::vec3 RaytracingRenderer::renderPixel(const glm::ivec2& pixel_coord)
         }
         else { break; }
     }
-    // film.setPixel(pixel_coord, final_color);
+
     return final_color;
 }
