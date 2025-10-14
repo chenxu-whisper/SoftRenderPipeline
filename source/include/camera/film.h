@@ -42,7 +42,6 @@ public:
     Pixel getPixel(size_t x, size_t y) const; // 获取像素值
     void setPixel(size_t x, size_t y, const glm::vec3& color); // 像素值范围[0, 1]
     void save(const std::filesystem::path&  filepath) const; // 保存为PPM格式
-    void clear();
 
 private:
     size_t m_width;

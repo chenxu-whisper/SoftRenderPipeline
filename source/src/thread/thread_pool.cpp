@@ -1,7 +1,5 @@
 #include "./thread/thread_pool.h"
 
-ThreadPool thread_pool;
-
 ThreadPool::ThreadPool(size_t threads_num)
 {
     m_alive = 1;

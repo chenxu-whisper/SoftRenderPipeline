@@ -52,11 +52,4 @@ void Film::save(const std::filesystem::path &filepath) const
     file.close();
 }
 
-void Film::clear()
-{
-    m_pixels.clear();
-    m_pixels.resize(m_width * m_height);
-}
-
-
 Film::~Film() = default;
