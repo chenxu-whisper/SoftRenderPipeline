@@ -39,5 +39,6 @@ private:
     SpinLock m_lock; // 自旋锁
 };
 
+extern ThreadPool thread_pool;
 
 #endif //THREAD_POOL_H

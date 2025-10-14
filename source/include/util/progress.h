@@ -9,6 +9,8 @@ public:
     Progress(size_t total, int step = 1);
     void update(size_t count);
 
+    void update();
+
 private:
     size_t m_total; // 总任务数
     size_t m_current; // 当前完成任务数
