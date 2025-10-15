@@ -1,14 +1,18 @@
 #include "renderer/raytracing_renderer.h"
 #include "./util/frame.h"
 
+// 光线追踪：https://raytracing.github.io/books/RayTracingInOneWeekend.html
 glm::vec3 RaytracingRenderer::renderPixel(const glm::ivec2& pixel_coord)
 {
     Ray ray = m_camera.generateRay(glm::vec2(pixel_coord), glm::vec2(m_rng.uniform(), m_rng.uniform())); // 生成射线
     glm::vec3 beta = { 1.0f, 1.0f, 1.0f }; // 反射系数
     glm::vec3 final_color = { 0.0f, 0.0f, 0.0f }; // 最终颜色
 
-    // 光线追踪：https://raytracing.github.io/books/RayTracingInOneWeekend.html
-    while (true)
+    int max_depth = 100; // 设置最大递归深度
+    float min_energy = 0.001f; // 设置最小能量阈值
+    int depth = 0; // 当前递归深度
+
+    while (depth < max_depth && glm::length(beta) > min_energy) // 添加终止条件
     {
         std::optional<HitInfo> hit_info = m_scene.intersect(ray, 0.0f, 1000.0f); // 计算射线与场景中物体的交点
         if (hit_info.has_value())
@@ -37,6 +41,7 @@ glm::vec3 RaytracingRenderer::renderPixel(const glm::ivec2& pixel_coord)
                     light_direction.y = -light_direction.y;
             }
             ray.m_direction = frame.world_to_screen(light_direction); // 转换为屏幕空间
+            depth++; // 递归深度加1
         }
         else { break; }
     }

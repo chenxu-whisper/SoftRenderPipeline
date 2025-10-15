@@ -27,7 +27,7 @@ int main()
 
     Scene scene;
     scene.addShape(sphere,
-        {glm::vec3(0.8f, 1.0f, 0.4f), true, glm::vec3(0.2f, 0.1f, 0.3f)},
+        {glm::vec3(0.8f, 1.0f, 0.4f), false, glm::vec3(0.2f, 0.1f, 0.3f)},
                glm::vec3(0.3f, 0.1f, 0.0f), glm::vec3(0.3f), glm::vec3(0.0f, 0.0f, 0.0f));
     scene.addShape(plane,
         {glm::vec3(0.4f, 0.8f, 1.0f), false, glm::vec3(0.3f, 0.2f, 0.1f)},
@@ -35,6 +35,7 @@ int main()
     scene.addShape(model,
         {glm::vec3(1.0f, 0.4f, 0.6f), false, glm::vec3(0.1f, 0.2f, 0.3f)},
             glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(0.6f), glm::vec3(0.0f, 120.0f, 0.0f));
+
   #if NORMAL_RENDERER
     NormalRenderer normal_renderer(camera, scene);
     normal_renderer.render(SPP, R"(../../normal.ppm)");
