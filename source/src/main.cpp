@@ -10,8 +10,8 @@
 #include "./renderer/normal_renderer.h"
 #include "./renderer/raytracing_renderer.h"
 
-#define FILM_WIDTH 108
-#define FILM_HEIGHT 72
+#define FILM_WIDTH 192
+#define FILM_HEIGHT 108
 #define NORMAL_RENDERER 0
 #define RAYTRACING_RENDERER 1
 #define SPP 128
@@ -45,7 +45,6 @@ int main()
     RaytracingRenderer raytracing_renderer(camera, scene);
     raytracing_renderer.render(SPP, R"(../../raytracing.ppm)");
   #endif
-
 
     return 0;
 }

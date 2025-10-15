@@ -46,5 +46,5 @@ glm::vec3 RaytracingRenderer::renderPixel(const glm::ivec2& pixel_coord)
         else { break; }
     }
 
-    return final_color;
+    return glm::clamp(final_color, 0.0f, 1.0f);
 }

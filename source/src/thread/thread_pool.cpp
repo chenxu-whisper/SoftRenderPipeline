@@ -1,4 +1,7 @@
 #include "./thread/thread_pool.h"
+
+#include <cmath>
+
 #include "./util/profile.h"
 
 ThreadPool thread_pool;
@@ -25,6 +28,7 @@ void ThreadPool::workerThread(ThreadPool *thread_pool)
         if (task != nullptr)
         {
             task->run(); // 执行任务
+            delete task; // 释放任务内存
             thread_pool->m_task_count--; // 任务数量减少
         }
         else
@@ -35,14 +39,19 @@ void ThreadPool::workerThread(ThreadPool *thread_pool)
 struct ParallelForTask:public Task
 {
 public:
-    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& lamda)
-                    :m_x(x), m_y(y), m_lambda(lamda)
+    ParallelForTask(size_t x, size_t y, size_t chunk_width, size_t chunk_height, const std::function<void(size_t, size_t)>& lamda)
+                    :m_x(x), m_y(y), m_chunk_width(chunk_width), m_chunk_height(chunk_height), m_lambda(lamda)
     {}
 
-    void run() override { m_lambda(m_x, m_y); }
+    void run() override
+    {
+        for (size_t i = 0; i < m_chunk_width; i++)
+            for (size_t j = 0; j < m_chunk_height; j++)
+                m_lambda(m_x + i, m_y + j);
+    }
 
 private:
-    size_t m_x, m_y;
+    size_t m_x, m_y, m_chunk_width, m_chunk_height;
     std::function<void(size_t, size_t)> m_lambda;
 };
 
@@ -52,12 +61,24 @@ void ThreadPool::parallelFor(size_t width, size_t height, const std::function<vo
 
     SpinLockGuard guard(m_lock);
 
-    for (size_t i = 0; i < width; i++)
-        for (size_t j = 0; j < height; j++)
+    // 区域划分渲染，每个线程处理的宽度和高度
+    int chunk_width = static_cast<int>(std::ceil(static_cast<float>(width) / std::sqrt(16.0f) / static_cast<float>(m_threads.size())));
+    int chunk_height = static_cast<int>(std::ceil(static_cast<float>(height) / std::sqrt(16.0f) / static_cast<float>(m_threads.size())));
+    // 处理任务
+    for (size_t x = 0; x < width; x+=chunk_width)
+    {
+        for (size_t y = 0; y < height; y+=chunk_height)
         {
-            m_tasks.push_back(new  ParallelForTask(i, j, lambda));
-            m_task_count++;
+            // 处理边界情况
+            if (x + chunk_width > width)
+                chunk_width = width - x; // 处理最后一列时，宽度可能会小于 chunk_width
+            if (y + chunk_height > height)
+                chunk_height = height - y; // 处理最后一行时，高度可能会小于 chunk_height
+
+            m_tasks.push_back(new  ParallelForTask(x, y, chunk_width, chunk_height, lambda)); // 添加任务
+            m_task_count++; // 任务数量增加
         }
+    }
 }
 
 void ThreadPool::wait() const
