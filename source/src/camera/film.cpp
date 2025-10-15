@@ -3,7 +3,7 @@
 #include "./camera/film.h"
 #include "./util/rgb.h"
 #include "./util/profile.h"
-
+#include "./thread/thread_pool.h"
 
 Film::Film(size_t width, size_t height)
     : m_width(width), m_height(height)
@@ -41,18 +41,24 @@ void Film::save(const std::filesystem::path &filepath) const
     // 写入图片头信息 P6 表示二进制格式
     file << "P6\n" << m_width << " " << m_height << "\n255\n";
 
-    // 写入图片像素信息
-    for (size_t y = 0; y < m_height; ++y)
-    {
-        for (size_t x = 0; x < m_width; ++x)
-        {
-            Pixel pixel = getPixel(x, y);
-            RGB color = RGB(pixel.m_color / static_cast<float>(pixel.m_sample_count)); // 获取像素颜色
-            file << color.m_r << color.m_g << color.m_b; // 写入像素值
-        }
-    }
+    // 用于存储像素值的缓冲区
+    std::vector<uint8_t> buffer(m_width * m_height * 3); // 每个像素有3个通道（RGB）
 
-    file.close();
+    // 并行处理每个像素，将颜色值写入缓冲区
+    thread_pool.parallelFor(m_width, m_height, [&](size_t x, size_t y)
+    {
+        Pixel pixel = getPixel(x, y); // 获取像素值
+        RGB color = RGB(pixel.m_color / static_cast<float>(pixel.m_sample_count)); // 获取像素颜色
+        // 写入像素值到缓冲区
+        buffer[(x + y * m_width) * 3 + 0] = color.m_r;
+        buffer[(x + y * m_width) * 3 + 1] = color.m_g;
+        buffer[(x + y * m_width) * 3 + 2] = color.m_b;
+    });
+    thread_pool.wait(); // 等待所有线程完成任务
+
+    // 写入图片像素信息
+    file.write(reinterpret_cast<const char*>(buffer.data()), buffer.size()); // 写入缓冲区中的像素值
+    file.close(); // 关闭文件流
 }
 
 void Film::clear()
