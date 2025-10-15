@@ -1,9 +1,12 @@
 #include "./renderer/base_renderer.h"
 #include "./thread/thread_pool.h"
 #include "./util/progress.h"
+#include "./util/profile.h"
 
 void BaseRenderer::render(size_t spp, const std::filesystem::path &output_dir)
 {
+    PROFILE("Render " + std::to_string(spp) + "spp " + output_dir.string());
+
     size_t current_spp = 0; // 当前采样次数
     size_t increase = 1; // 每次增加的采样次数
 

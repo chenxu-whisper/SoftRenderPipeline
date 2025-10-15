@@ -3,12 +3,15 @@
 #include <sstream>
 #include <vector>
 #include "./shape/model.h"
+#include "./util/profile.h"
 
 
 Model::Model(const std::vector<Triangle>& triangles) : m_triangles(triangles) {}
 
 Model::Model(const std::filesystem::path& path)
 {
+    PROFILE("Load Model " + path.string());
+
     std::vector<glm::vec3> positions; // 顶点位置
     std::vector<glm::vec3> normals;  // 法线
 
