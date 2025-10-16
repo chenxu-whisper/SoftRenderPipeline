@@ -19,7 +19,6 @@
 int main()
 {
     Film film(FILM_WIDTH, FILM_HEIGHT);
-    // Camera camera(film, glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 60.0f);
     Camera camera(film, glm::vec3(0.0f, 0.5f, 0.6f), glm::vec3(0.0f, 0.2f, 0.0f), 60.0f);
     Sphere sphere(glm::vec3(0.0f, 0.0f, 0.0f), 0.5f);
     Plane plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f);

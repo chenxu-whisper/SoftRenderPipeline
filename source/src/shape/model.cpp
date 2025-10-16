@@ -6,7 +6,10 @@
 #include "./util/profile.h"
 
 
-Model::Model(const std::vector<Triangle>& triangles) : m_triangles(triangles) {}
+Model::Model(const std::vector<Triangle>& triangles) : m_triangles(triangles)
+{
+    buildBounds(); // 构建模型的Bounds
+}
 
 Model::Model(const std::filesystem::path& path)
 {
@@ -54,6 +57,8 @@ Model::Model(const std::filesystem::path& path)
         }
     }
 
+    buildBounds(); // 构建模型的Bounds
+
     std::cout << "Model loaded with " << m_triangles.size() << " triangles" << std::endl;
 
     if (m_triangles.empty())
@@ -62,6 +67,10 @@ Model::Model(const std::filesystem::path& path)
 
 std::optional<HitInfo> Model::intersect(const Ray& ray, float t_min, float t_max) const
 {
+    // 如果射线与Bounds不相交，直接返回空
+    if (!m_bounds.hasIntersection(ray, t_min, t_max))
+        return std::nullopt;
+
     std::optional<HitInfo> hit; // 记录最近的交点
 
     // 遍历模型中的所有三角形，计算射线与每个三角形的交点
@@ -73,4 +82,16 @@ std::optional<HitInfo> Model::intersect(const Ray& ray, float t_min, float t_max
                     hit = hit_triangle;
         }
     return hit;
+}
+
+void Model::buildBounds()
+{
+    // 遍历模型中的所有三角形，更新Bounds的最小点和最大点
+    for (const auto& triangle : m_triangles)
+    {
+        // 扩展Bounds，确保包含当前三角形的所有顶点
+        m_bounds.expand(triangle.m_v0);
+        m_bounds.expand(triangle.m_v1);
+        m_bounds.expand(triangle.m_v2);
+    }
 }
