@@ -25,8 +25,6 @@ void Film::setPixel(size_t x, size_t y, const glm::vec3 &color)
 
 void Film::save(const std::filesystem::path &filepath) const
 {
-    PROFILE("Save Film " + filepath.string());
-
     // 保存图片
     // std::ios::binary 表示以二进制格式写入文件：
     // 不会对换行符进行自动转换

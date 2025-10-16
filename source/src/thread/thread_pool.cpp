@@ -57,8 +57,6 @@ private:
 
 void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda)
 {
-    PROFILE("ParallelFor ");
-
     SpinLockGuard guard(m_lock);
 
     // 区域划分渲染，每个线程处理的宽度和高度
