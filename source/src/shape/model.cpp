@@ -5,6 +5,7 @@
 #include <rapidobj/rapidobj.hpp>
 #include "./shape/model.h"
 #include "./util/profile.h"
+#include "./util/color.h"
 
 
 Model::Model(const std::vector<Triangle>& triangles) : m_triangles(triangles)
@@ -133,7 +134,7 @@ Model::Model(const std::filesystem::path& path)
 
     buildBounds(); // 构建模型的Bounds
 
-    std::cout << "Model loaded with " << m_triangles.size() << " triangles" << std::endl;
+    std::cout << Color::BLUE <<"Model loaded with " << m_triangles.size() << " triangles" << Color::RESET << std::endl;
 
     if (m_triangles.empty())
         std::cerr << "Warning: Model loaded but contains no triangles. Check OBJ file format." << std::endl;
