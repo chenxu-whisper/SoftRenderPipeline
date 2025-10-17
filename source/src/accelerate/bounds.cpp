@@ -34,3 +34,5 @@ bool Bounds::hasIntersection(const Ray &ray, float t_min, float t_max) const
     // 如果近交参数小于等于远交参数，射线与Bounds有交点
     return glm::max(near,t_min) <= glm::min(far,t_max);
 }
+
+glm::vec3 Bounds::diagonal() const { return m_bmax - m_bmin; } // 返回Bounds的对角线向量

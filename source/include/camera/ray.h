@@ -16,10 +16,10 @@ struct Ray
 
 struct HitInfo
 {
-    float t;
-    glm::vec3 position;
-    glm::vec3 normal;
-    const Material *material = nullptr;
+    float m_t;
+    glm::vec3 m_position;
+    glm::vec3 m_normal;
+    const Material *m_material = nullptr;
 };
 
 #endif //RAY_H

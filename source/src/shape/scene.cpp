@@ -28,12 +28,12 @@ std::optional<HitInfo> Scene::intersect(const Ray &ray, float t_min, float t_max
         {
             // 将物体空间中的交点转换为世界空间中的交点
             // 注意：交点的法线需要根据物体空间到世界空间的变换矩阵进行变换
-            shape_hit_info->position = shape_instance.m_object_to_world_matrix * glm::vec4(shape_hit_info->position, 1.0f);
-            shape_hit_info->normal = glm::normalize(glm::mat3(glm::transpose(shape_instance.m_world_to_object_matrix)) * shape_hit_info->normal);
-            shape_hit_info->material = &shape_instance.m_material;
+            shape_hit_info->m_position = shape_instance.m_object_to_world_matrix * glm::vec4(shape_hit_info->m_position, 1.0f);
+            shape_hit_info->m_normal = glm::normalize(glm::mat3(glm::transpose(shape_instance.m_world_to_object_matrix)) * shape_hit_info->m_normal);
+            shape_hit_info->m_material = &shape_instance.m_material;
 
             // 更新最近交点
-            if (!hit_info.has_value() || shape_hit_info->t < hit_info->t)
+            if (!hit_info.has_value() || shape_hit_info->m_t < hit_info->m_t)
             {
                 hit_info = shape_hit_info;
             }

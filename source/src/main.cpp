@@ -14,7 +14,7 @@
 #define FILM_HEIGHT 108
 #define NORMAL_RENDERER 0
 #define RAYTRACING_RENDERER 1
-#define SPP 128
+#define SPP 256 /2
 
 int main()
 {

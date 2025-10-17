@@ -17,13 +17,13 @@ glm::vec3 RaytracingRenderer::renderPixel(const glm::ivec2& pixel_coord)
         std::optional<HitInfo> hit_info = m_scene.intersect(ray, 0.0f, 1000.0f); // 计算射线与场景中物体的交点
         if (hit_info.has_value())
         {
-            final_color += beta * hit_info->material->m_emissive;
-            beta *= hit_info->material->m_albedo; //
+            final_color += beta * hit_info->m_material->m_emissive; // 累加颜色
+            beta *= hit_info->m_material->m_albedo; //
 
-            ray.m_origin = hit_info->position + hit_info->normal * 0.001f; // 避免与物体本身相交
-            Frame frame(hit_info->normal); // 计算反射方向
+            ray.m_origin = hit_info->m_position + hit_info->m_normal * 0.001f; // 避免与物体本身相交
+            Frame frame(hit_info->m_normal); // 计算反射方向
             glm::vec3 light_direction;
-            if (hit_info->material->m_is_specular)
+            if (hit_info->m_material->m_is_specular)
             {
                 glm::vec3 view_dir = frame.world_to_screen(-ray.m_direction); // 计算反射方向
                 light_direction = glm::vec3(-view_dir.x, view_dir.y, -view_dir.z); // 与反射方向相反

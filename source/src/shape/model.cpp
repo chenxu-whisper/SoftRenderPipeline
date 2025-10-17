@@ -8,9 +8,10 @@
 #include "./util/color.h"
 
 
-Model::Model(const std::vector<Triangle>& triangles) : m_triangles(triangles)
+Model::Model(const std::vector<Triangle>& triangles)
 {
-    buildBounds(); // 构建模型的Bounds
+    std::vector<Triangle> ts = triangles;
+    m_bvh.build(std::move(ts)); // 构建模型的BVH
 }
 
 Model::Model(const std::filesystem::path& path)
@@ -19,6 +20,7 @@ Model::Model(const std::filesystem::path& path)
 
     // 使用rapidobj加载模型
     rapidobj::Result result = rapidobj::ParseFile(path, rapidobj::MaterialLibrary::Ignore());
+    std::vector<Triangle> triangles;
 
     // 遍历所有形状
     for (const auto& shape : result.shapes)
@@ -76,12 +78,12 @@ Model::Model(const std::filesystem::path& path)
                         result.attributes.normals[index.normal_index * 3 + 2]
                     };
                     // 构建三角形
-                    m_triangles.push_back(Triangle(position0, position1, position2, normal0, normal1, normal2));
+                    triangles.push_back(Triangle(position0, position1, position2, normal0, normal1, normal2));
                 }
                 else
                 {
                     // 没有法线，构建无法线三角形
-                    m_triangles.push_back(Triangle(position0, position1, position2));
+                    triangles.push_back(Triangle(position0, position1, position2));
                 }
             }
             index_offset += num_face_vertex; // 增加索引偏移量，处理下一个面
@@ -132,41 +134,12 @@ Model::Model(const std::filesystem::path& path)
     }
   #endif
 
-    buildBounds(); // 构建模型的Bounds
+    std::cout << Color::BLUE <<"Model loaded with " << triangles.size() << " triangles" << Color::RESET << std::endl;
 
-    std::cout << Color::BLUE <<"Model loaded with " << m_triangles.size() << " triangles" << Color::RESET << std::endl;
-
-    if (m_triangles.empty())
-        std::cerr << "Warning: Model loaded but contains no triangles. Check OBJ file format." << std::endl;
+    m_bvh.build(std::move(triangles));
 }
 
 std::optional<HitInfo> Model::intersect(const Ray& ray, float t_min, float t_max) const
 {
-    // 如果射线与Bounds不相交，直接返回空
-    if (!m_bounds.hasIntersection(ray, t_min, t_max))
-        return std::nullopt;
-
-    std::optional<HitInfo> hit; // 记录最近的交点
-
-    // 遍历模型中的所有三角形，计算射线与每个三角形的交点
-    for (const auto& triangle : m_triangles)
-        {
-            std::optional<HitInfo> hit_triangle = triangle.intersect(ray, t_min, t_max); // 计算射线与当前三角形的交点
-            if (hit_triangle.has_value())
-                if (!hit.has_value() || hit_triangle->t < hit->t) // 如果当前三角形的交点更接近射线起点，更新最近交点
-                    hit = hit_triangle;
-        }
-    return hit;
-}
-
-void Model::buildBounds()
-{
-    // 遍历模型中的所有三角形，更新Bounds的最小点和最大点
-    for (const auto& triangle : m_triangles)
-    {
-        // 扩展Bounds，确保包含当前三角形的所有顶点
-        m_bounds.expand(triangle.m_v0);
-        m_bounds.expand(triangle.m_v1);
-        m_bounds.expand(triangle.m_v2);
-    }
+    return m_bvh.intersect(ray, t_min, t_max);
 }

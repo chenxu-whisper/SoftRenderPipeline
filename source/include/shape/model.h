@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <vector>
 #include "triangle.h"
-#include "./accelerate/bounds.h"
+#include "accelerate/bvh.h"
 
 
 class Model : public Shape
@@ -19,8 +19,7 @@ private:
     void buildBounds();
 
 private:
-    std::vector<Triangle> m_triangles;
-    Bounds m_bounds;
+    BVH m_bvh;
 };
 
 #endif //MODEL_H
