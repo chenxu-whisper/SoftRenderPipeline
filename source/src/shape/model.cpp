@@ -64,13 +64,14 @@ Model::Model(const std::filesystem::path& path)
                         result.attributes.normals[index.normal_index * 3 + 1],
                         result.attributes.normals[index.normal_index * 3 + 2]
                     };
-                    index = shape.mesh.indices[index_offset + 2]; // 第二个法线索引
+                    index = shape.mesh.indices[index_offset + 1]; // 第二个法线索引
                     glm::vec3 normal1 // 第二个法线
                     {
                         result.attributes.normals[index.normal_index * 3 + 0],
                         result.attributes.normals[index.normal_index * 3 + 1],
                         result.attributes.normals[index.normal_index * 3 + 2]
                     };
+                    index = shape.mesh.indices[index_offset + 2]; // 第三个法线索引
                     glm::vec3 normal2
                     {
                         result.attributes.normals[index.normal_index * 3 + 0],
@@ -128,7 +129,7 @@ Model::Model(const std::filesystem::path& path)
             iss>>idx_v.y>>trash>>trash>>idx_vn.y;
             iss>>idx_v.z>>trash>>trash>>idx_vn.z;
             // 索引从1开始，转换为0开始的索引
-            m_triangles.push_back(Triangle(positions[idx_v.x - 1], positions[idx_v.y - 1], positions[idx_v.z - 1],
+            triangles.push_back(Triangle(positions[idx_v.x - 1], positions[idx_v.y - 1], positions[idx_v.z - 1],
                                             normals[idx_vn.x - 1], normals[idx_vn.y - 1], normals[idx_vn.z - 1]));
         }
     }

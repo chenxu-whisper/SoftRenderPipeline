@@ -10,11 +10,11 @@
 #include "./renderer/normal_renderer.h"
 #include "./renderer/raytracing_renderer.h"
 
-#define FILM_WIDTH 192
-#define FILM_HEIGHT 108
+#define FILM_WIDTH 1920
+#define FILM_HEIGHT 1080
 #define NORMAL_RENDERER 0
 #define RAYTRACING_RENDERER 1
-#define SPP 256 /2
+#define SPP 128
 
 int main()
 {
@@ -22,7 +22,7 @@ int main()
     Camera camera(film, glm::vec3(0.0f, 0.5f, 0.6f), glm::vec3(0.0f, 0.2f, 0.0f), 60.0f);
     Sphere sphere(glm::vec3(0.0f, 0.0f, 0.0f), 0.5f);
     Plane plane(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 1.0f);
-    Model model(R"(../../asset/model/simple_dragon.obj)");
+    Model model(R"(../../asset/model/dragon_87k.obj)"); // simple_dragon dragon_87k
 
     Scene scene;
     scene.addShape(sphere,
@@ -33,7 +33,7 @@ int main()
             glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     scene.addShape(model,
         {glm::vec3(1.0f, 0.4f, 0.6f), false, glm::vec3(0.1f, 0.2f, 0.3f)},
-            glm::vec3(0.0f, 0.2f, 0.0f), glm::vec3(0.6f), glm::vec3(0.0f, 120.0f, 0.0f));
+            glm::vec3(0.0f, 0.2f, -0.1f), glm::vec3(0.6f), glm::vec3(0.0f, 120.0f, 0.0f));
 
   #if NORMAL_RENDERER
     NormalRenderer normal_renderer(camera, scene);
